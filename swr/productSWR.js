@@ -1,7 +1,7 @@
 import useSWR from "swr"
 import { fetchGet } from "../fetching/fetchingPost"
 
-export const ProductSwr = (url,token) => {
+export const ProductSwr = (url,token) => {    
     const {data,error} = useSWR([url,token],fetchGet)
     return{
         data:data,

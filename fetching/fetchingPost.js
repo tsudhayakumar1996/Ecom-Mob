@@ -15,6 +15,24 @@ export const fetchPost = async (url,postObj,token) => {
     return data          
 } 
 
+export const fetchDelete = async (url,postObj,token) => {
+    console.log(url,postObj,token)
+    const data = []
+    await fetch(url,{
+        method:"DELETE",
+        headers:{
+            "Content-Type":"application/json",
+            "auth-token":token
+        },
+        body:JSON.stringify(
+            postObj
+        )
+    })        
+    .then(response =>response.json()) 
+    .then(response => console.log(response))      
+    return data          
+}
+
 export const fetchGet = async (url,token) => {    
     const data = []
     await fetch(url,{
@@ -22,10 +40,10 @@ export const fetchGet = async (url,token) => {
         headers:{
             "Content-Type":"application/json",
             "auth-token":token
-        }        
+        },                
     })        
     .then(response =>response.json()) 
     .then(response => data.push(response))      
     return data          
-}        
+} 
 

@@ -9,8 +9,7 @@ import { ProductSwr } from "../swr/productSWR";
 export default function Home ({navigation}) {  
     
     const contextVal = useContext(TopContext)        
-    const {data,isLoading,isError} = ProductSwr(APILists.baseURL+"/product",contextVal.loggedIn.token)
-    console.log(data,"data from")     
+    const {data,isLoading,isError} = ProductSwr(APILists.baseURL+"/product",contextVal.loggedIn.token)       
     
     const indivProductHandler = (item) =>{
         navigation.navigate("IndivProductStack",item)

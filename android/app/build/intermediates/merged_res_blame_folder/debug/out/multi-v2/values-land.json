@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/home/udhay/Projects/learning/Ecom-Mobile/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-land/values-land.xml",
+            "outputFile": "/home/udhay/Projects/learning/Ecom/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-land/values-land.xml",
             "map": [
                 {
                     "source": "/home/udhay/.gradle/caches/transforms-3/10d56dc05e97ac2f55b989317a070bfc/transformed/material-1.1.0/res/values-land/values-land.xml",

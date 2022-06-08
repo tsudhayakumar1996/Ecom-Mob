@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/home/udhay/Projects/learning/Ecom-Mobile/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-sk/values-sk.xml",
+            "outputFile": "/home/udhay/Projects/learning/Ecom/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-sk/values-sk.xml",
             "map": [
                 {
                     "source": "/home/udhay/.gradle/caches/transforms-3/d97418f29556dc00d9262accd924e8ac/transformed/core-1.6.0/res/values-sk/values-sk.xml",

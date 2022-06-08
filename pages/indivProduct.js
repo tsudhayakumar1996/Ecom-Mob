@@ -1,5 +1,5 @@
 import React,{useState,useContext} from "react";
-import {View,StyleSheet,Text, Image, TouchableOpacity,Modal,ScrollView} from "react-native"
+import {View,StyleSheet,Text, Image, TouchableOpacity,Modal,ScrollView,ActivityIndicator} from "react-native"
 import SafeAreaView from 'react-native-safe-area-view';
 import NavBar from "../components/navBar";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -18,6 +18,7 @@ export default function IndivProduct ({navigation,route}) {
     const [modalShow, setmodalShow] = useState(false) 
     const [productArr, setproductArr] = useState([]) 
     const [sizeArr, setsizeArr] = useState([])
+    const [loader, setloader] = useState(false)
     
     const modalHandler = () => {
         setmodalShow(true)
@@ -81,7 +82,8 @@ export default function IndivProduct ({navigation,route}) {
         settotalProductcount(sumCount)
     }
     
-    const addCartHandler = async () => {               
+    const addCartHandler = async () => { 
+        setloader(true)              
         let postObj = {}
             postObj.user_id = userVal.loggedIn.user_id
             postObj.cart_lists = {
@@ -93,10 +95,11 @@ export default function IndivProduct ({navigation,route}) {
             }             
         const response = await fetchPost(APILists.baseURL+"/cart_list",postObj,userVal.loggedIn.token)
             if(response[0].status === "success"){
+                setloader(false)
                 setmodalShow(false)    
                 navigation.navigate("CartTab",{
                 screen:'CartStack',
-                params:response[0]
+                params: {mutate : true}                
             }) 
         }
     }            
@@ -144,7 +147,12 @@ export default function IndivProduct ({navigation,route}) {
                             setmodalShow(false);
                         }}
                         >   
-                            <View style={{alignItems:'center'}}>                         
+                            <View style={{alignItems:'center'}}>  
+                                {loader &&
+                                    <View style={styles.loadPosition}>
+                                        <ActivityIndicator color={'#fff'} size={"large"}/>
+                                    </View>
+                                }                       
                                 <Image 
                                     source={{uri:APILists.baseURL+"/"+data.product_image}}
                                     style={{ width: 350, height:350 }}
@@ -191,8 +199,8 @@ export default function IndivProduct ({navigation,route}) {
                             <MaterialCommunityIcons name="close" color={"#fff"} size={24} />
                         </TouchableOpacity>
                         {productArr.length > 0 &&
-                            <View style={{position:'absolute',bottom:20,width:"100%"}}>
-                                <View style={{alignItems:'center',justifyContent:'center'}}>
+                            <View style={{position:'absolute',bottom:20,width:"100%"}}>                                
+                                <View style={{alignItems:'center',justifyContent:'center'}}>                                    
                                     <ButtonCommon text={"Add Cart"} onPress={()=>addCartHandler()}/>
                                 </View>
                             </View>
@@ -326,5 +334,10 @@ const styles = StyleSheet.create({
         textAlign:'right',
         borderTopWidth:1,
         borderBottomWidth:1
+    },
+    loadPosition:{
+        position:'absolute',        
+        top:175,
+        zIndex:2,               
     }      
 })

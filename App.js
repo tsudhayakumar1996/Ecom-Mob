@@ -39,22 +39,22 @@ export default function App () {
 
   const Drawer = createDrawerNavigator();        
 
-  return(    
-    <TopContext.Provider value={{loggedIn,setloggedIn}}>      
-        <SafeAreaProvider>      
-          <NavigationContainer>   
-            {loggedIn.loggedIn ?             
-              <Drawer.Navigator initialRouteName="Home">
-                <Drawer.Screen 
-                  name="Drawer" 
-                  component={MainTab}
-                  options={{headerShown:false}}
-                />          
-              </Drawer.Navigator>
-              : <LoginStack></LoginStack>
-            }
-          </NavigationContainer>
-        </SafeAreaProvider>      
-    </TopContext.Provider>
+  return(        
+      <TopContext.Provider value={{loggedIn,setloggedIn}}>      
+          <SafeAreaProvider>      
+            <NavigationContainer>   
+              {loggedIn.loggedIn ?             
+                <Drawer.Navigator initialRouteName="Home">
+                  <Drawer.Screen 
+                    name="Drawer" 
+                    component={MainTab}
+                    options={{headerShown:false}}
+                  />          
+                </Drawer.Navigator>
+                : <LoginStack></LoginStack>
+              }
+            </NavigationContainer>
+          </SafeAreaProvider>      
+      </TopContext.Provider>    
   )
 }
