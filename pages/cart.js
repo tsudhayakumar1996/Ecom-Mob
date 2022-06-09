@@ -6,25 +6,35 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { fetchDelete, fetchGet } from "../fetching/fetchingPost";
 import { TopContext } from "../App";
 import { Dimensions } from 'react-native';
+import { FlatList } from "react-native-gesture-handler";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function Cart ({navigate,route}) { 
-    
+    console.log("component run")
     const [isLoading, setisLoading] = useState(true)
+    const [data, setData] = useState([])
     const contextVal = useContext(TopContext)  
-    const user_id = contextVal.loggedIn.user_id  
-    // const isMutate = route.params.mutate 
+    const user_id = contextVal.loggedIn.user_id 
+    let isMutate 
+    isMutate = route.params ? route.params.mutate : false
+    console.log(isMutate,"-----------is mutate")
     
     useEffect(() => {
-      const cart_lists_init = fetchGet(APILists.baseURL+"/cart_list/"+user_id,contextVal.loggedIn.token)
-      console.log(cart_lists_init)
+      setisLoading(true)
+        console.log("useeffect run")
+      fetchData()                  
     }, [])
-    
-           
-    // const {data,isLoading,isError} = ProductSwr(isMutate ? APILists.baseURL+"/cart_list/"+user_id : "",contextVal.loggedIn.token)   
-    // console.log(data,"------data on cart page")        
+
+    const fetchData = async () => {
+        const cart_lists_init = await fetchGet(APILists.baseURL+"/cart_list/"+user_id,contextVal.loggedIn.token)
+        console.log(cart_lists_init,"-------cart_lists_init")
+        if(cart_lists_init){
+            setisLoading(false)
+            setData(cart_lists_init)
+        }        
+    }        
     
     const crudHandler = async (key,value) => {
         if(key === "delete") {
@@ -37,51 +47,100 @@ export default function Cart ({navigate,route}) {
         }
     }
 
+    const renderItem = ({item}) => {
+        const indiv_price = item.indiv_price.split(" ")
+        const splitted_price = indiv_price[0]
+        return(
+            <View style={styles.listBox}>                            
+                <Image 
+                    source={{uri:APILists.baseURL+"/"+item.product_image}}
+                    style={{ width: 90, height:90 }}
+                />
+                <View style={styles.sizeBox}>
+                    {item.size.map((size,index)=>{
+                        return(
+                            <View key={index} style={styles.sizeBox}>
+                                <View style={styles.roundBox}>
+                                    <Text style={styles.roundBoxText}>{size.size}</Text> 
+                                </View> 
+                                <View style={styles.qtyBox}>
+                                    <Text style={styles.qtyBoxText}>{size.qty}</Text>                                              
+                                </View>                                            
+                            </View>
+                        )
+                    })}
+                </View>   
+                <View>           
+                    <Text style={styles.priceText}>Amount</Text>              
+                    <Text style={styles.priceText}>{(each.total_qty)*splitted_price}{" Rs"}</Text>
+                </View>
+                <TouchableOpacity style={styles.editBtn} onPress={() => crudHandler("edit")}>
+                    <MaterialCommunityIcons name="square-edit-outline" color={"#000"} size={24} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.deleteBtn} onPress={() => crudHandler("delete",each.unique_id)}>
+                    <MaterialCommunityIcons name="delete" color={"#000"} size={24} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.payBtn} onPress={() => crudHandler("pay")}>
+                    <MaterialCommunityIcons name="arrow-right" color={"#000"} size={24} />
+                </TouchableOpacity>                            
+            </View>
+        )
+    }
+
     return(
         <SafeAreaView style={styles.container}> 
             <StatusBar barStyle="dark-content" backgroundColor="white" />   
             {!isLoading ?       
-                <ScrollView>
-                    {data[0] !==null && data[0].cart_lists.map((each,index)=>{
-                        const indiv_price = each.indiv_price.split(" ")
-                        const splitted_price = indiv_price[0]
-                        return(
-                            <View key={index} style={styles.listBox}>                            
-                                <Image 
-                                    source={{uri:APILists.baseURL+"/"+each.product_image}}
-                                    style={{ width: 90, height:90 }}
-                                />
-                                <View style={styles.sizeBox}>
-                                    {each.size.map((size,index)=>{
-                                        return(
-                                            <View key={index} style={styles.sizeBox}>
-                                                <View style={styles.roundBox}>
-                                                    <Text style={styles.roundBoxText}>{size.size}</Text> 
-                                                </View> 
-                                                <View style={styles.qtyBox}>
-                                                    <Text style={styles.qtyBoxText}>{size.qty}</Text>                                              
-                                                </View>                                            
-                                            </View>
-                                        )
-                                    })}
-                                </View>   
-                                <View>           
-                                    <Text style={styles.priceText}>Amount</Text>              
-                                    <Text style={styles.priceText}>{(each.total_qty)*splitted_price}{" Rs"}</Text>
+                // <ScrollView>  
+                    <>    
+                        {data.length === 1 && 
+                            <FlatList 
+                                data = {data[0].cart_list}
+                                renderItem = {renderItem}
+                                keyExtractor = {item =>item._id}
+                            />    
+                        }        
+                        {/* {data.length === 1 && data[0].cart_lists.map((each,index)=>{
+                            const indiv_price = each.indiv_price.split(" ")
+                            const splitted_price = indiv_price[0]
+                            return(
+                                <View key={index} style={styles.listBox}>                            
+                                    <Image 
+                                        source={{uri:APILists.baseURL+"/"+each.product_image}}
+                                        style={{ width: 90, height:90 }}
+                                    />
+                                    <View style={styles.sizeBox}>
+                                        {each.size.map((size,index)=>{
+                                            return(
+                                                <View key={index} style={styles.sizeBox}>
+                                                    <View style={styles.roundBox}>
+                                                        <Text style={styles.roundBoxText}>{size.size}</Text> 
+                                                    </View> 
+                                                    <View style={styles.qtyBox}>
+                                                        <Text style={styles.qtyBoxText}>{size.qty}</Text>                                              
+                                                    </View>                                            
+                                                </View>
+                                            )
+                                        })}
+                                    </View>   
+                                    <View>           
+                                        <Text style={styles.priceText}>Amount</Text>              
+                                        <Text style={styles.priceText}>{(each.total_qty)*splitted_price}{" Rs"}</Text>
+                                    </View>
+                                    <TouchableOpacity style={styles.editBtn} onPress={() => crudHandler("edit")}>
+                                        <MaterialCommunityIcons name="square-edit-outline" color={"#000"} size={24} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.deleteBtn} onPress={() => crudHandler("delete",each.unique_id)}>
+                                        <MaterialCommunityIcons name="delete" color={"#000"} size={24} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.payBtn} onPress={() => crudHandler("pay")}>
+                                        <MaterialCommunityIcons name="arrow-right" color={"#000"} size={24} />
+                                    </TouchableOpacity>                            
                                 </View>
-                                <TouchableOpacity style={styles.editBtn} onPress={() => crudHandler("edit")}>
-                                    <MaterialCommunityIcons name="square-edit-outline" color={"#000"} size={24} />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.deleteBtn} onPress={() => crudHandler("delete",each.unique_id)}>
-                                    <MaterialCommunityIcons name="delete" color={"#000"} size={24} />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.payBtn} onPress={() => crudHandler("pay")}>
-                                    <MaterialCommunityIcons name="arrow-right" color={"#000"} size={24} />
-                                </TouchableOpacity>                            
-                            </View>
-                        )
-                    })}
-                </ScrollView> : <View style={styles.loadPosition}>
+                            )
+                        })} */}
+                    </> 
+                : <View style={styles.loadPosition}>
                                     <ActivityIndicator color={'#000'} size={"large"}/>
                                 </View>
             }
@@ -162,7 +221,7 @@ const styles = StyleSheet.create({
     },
     loadPosition:{
         position:'absolute',        
-        top:windowWidth/2,
-        left:windowHeight/2,               
+        top:100,
+        zIndex:3              
     }   
 })
