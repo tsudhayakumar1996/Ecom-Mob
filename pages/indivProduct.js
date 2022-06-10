@@ -11,7 +11,7 @@ import { TopContext } from "../App";
 
 export default function IndivProduct ({navigation,route}) {  
     const userVal = useContext(TopContext)  
-    const data = route.params
+    const data = route.params    
     const numberPricesplit = data.price.split(" ")    
     const [indivPrice, setindivPrice] = useState(numberPricesplit[0])
     const [totalProductcount, settotalProductcount] = useState([0])

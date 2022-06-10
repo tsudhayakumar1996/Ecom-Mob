@@ -1,37 +1,30 @@
 import React, { useContext,useEffect,useState } from "react";
-import {View,StyleSheet,StatusBar,Text, ScrollView, Image, TouchableOpacity,ActivityIndicator} from "react-native"
+import { useFocusEffect } from '@react-navigation/native';
+import {View,StyleSheet,StatusBar,Text, Image, TouchableOpacity,ActivityIndicator,FlatList} from "react-native"
 import SafeAreaView from 'react-native-safe-area-view';
 import { APILists } from "../apilists";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { fetchDelete, fetchGet } from "../fetching/fetchingPost";
 import { TopContext } from "../App";
-import { Dimensions } from 'react-native';
-import { FlatList } from "react-native-gesture-handler";
-
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 
 export default function Cart ({navigate,route}) { 
-    console.log("component run")
-    const [isLoading, setisLoading] = useState(true)
-    const [data, setData] = useState([])
+    console.log("component run")    
+    const [data, setData] = useState(null)
     const contextVal = useContext(TopContext)  
     const user_id = contextVal.loggedIn.user_id 
     let isMutate 
     isMutate = route.params ? route.params.mutate : false
     console.log(isMutate,"-----------is mutate")
     
-    useEffect(() => {
-      setisLoading(true)
+    useFocusEffect(React.useCallback(() => {    
         console.log("useeffect run")
       fetchData()                  
     }, [])
+    )
 
     const fetchData = async () => {
-        const cart_lists_init = await fetchGet(APILists.baseURL+"/cart_list/"+user_id,contextVal.loggedIn.token)
-        console.log(cart_lists_init,"-------cart_lists_init")
-        if(cart_lists_init){
-            setisLoading(false)
+        const cart_lists_init = await fetchGet(APILists.baseURL+"/cart_list/"+user_id,contextVal.loggedIn.token)        
+        if(cart_lists_init){            
             setData(cart_lists_init)
         }        
     }        
@@ -40,10 +33,12 @@ export default function Cart ({navigate,route}) {
         if(key === "delete") {
             let postObj = {}
             postObj.user_id = contextVal.loggedIn.user_id
-            postObj.unique_id = value
-            console.log(postObj,"postObj check")
-            const response = await fetchDelete(APILists.baseURL+"/cart_list",contextVal.loggedIn.token,postObj)
-            console.log(response,"response check-------")
+            postObj.unique_id = value            
+            const response = await fetchDelete(APILists.baseURL+"/cart_list",contextVal.loggedIn.token,postObj) 
+            console.log(response)           
+        }
+        else if(key === "edit") {
+            alert(3)          
         }
     }
 
@@ -72,12 +67,12 @@ export default function Cart ({navigate,route}) {
                 </View>   
                 <View>           
                     <Text style={styles.priceText}>Amount</Text>              
-                    <Text style={styles.priceText}>{(each.total_qty)*splitted_price}{" Rs"}</Text>
+                    <Text style={styles.priceText}>{(item.total_qty)*splitted_price}{" Rs"}</Text>
                 </View>
                 <TouchableOpacity style={styles.editBtn} onPress={() => crudHandler("edit")}>
                     <MaterialCommunityIcons name="square-edit-outline" color={"#000"} size={24} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.deleteBtn} onPress={() => crudHandler("delete",each.unique_id)}>
+                <TouchableOpacity style={styles.deleteBtn} onPress={() => crudHandler("delete",item.unique_id)}>
                     <MaterialCommunityIcons name="delete" color={"#000"} size={24} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.payBtn} onPress={() => crudHandler("pay")}>
@@ -89,61 +84,16 @@ export default function Cart ({navigate,route}) {
 
     return(
         <SafeAreaView style={styles.container}> 
-            <StatusBar barStyle="dark-content" backgroundColor="white" />   
-            {!isLoading ?       
-                // <ScrollView>  
-                    <>    
-                        {data.length === 1 && 
-                            <FlatList 
-                                data = {data[0].cart_list}
-                                renderItem = {renderItem}
-                                keyExtractor = {item =>item._id}
-                            />    
-                        }        
-                        {/* {data.length === 1 && data[0].cart_lists.map((each,index)=>{
-                            const indiv_price = each.indiv_price.split(" ")
-                            const splitted_price = indiv_price[0]
-                            return(
-                                <View key={index} style={styles.listBox}>                            
-                                    <Image 
-                                        source={{uri:APILists.baseURL+"/"+each.product_image}}
-                                        style={{ width: 90, height:90 }}
-                                    />
-                                    <View style={styles.sizeBox}>
-                                        {each.size.map((size,index)=>{
-                                            return(
-                                                <View key={index} style={styles.sizeBox}>
-                                                    <View style={styles.roundBox}>
-                                                        <Text style={styles.roundBoxText}>{size.size}</Text> 
-                                                    </View> 
-                                                    <View style={styles.qtyBox}>
-                                                        <Text style={styles.qtyBoxText}>{size.qty}</Text>                                              
-                                                    </View>                                            
-                                                </View>
-                                            )
-                                        })}
-                                    </View>   
-                                    <View>           
-                                        <Text style={styles.priceText}>Amount</Text>              
-                                        <Text style={styles.priceText}>{(each.total_qty)*splitted_price}{" Rs"}</Text>
-                                    </View>
-                                    <TouchableOpacity style={styles.editBtn} onPress={() => crudHandler("edit")}>
-                                        <MaterialCommunityIcons name="square-edit-outline" color={"#000"} size={24} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.deleteBtn} onPress={() => crudHandler("delete",each.unique_id)}>
-                                        <MaterialCommunityIcons name="delete" color={"#000"} size={24} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.payBtn} onPress={() => crudHandler("pay")}>
-                                        <MaterialCommunityIcons name="arrow-right" color={"#000"} size={24} />
-                                    </TouchableOpacity>                            
-                                </View>
-                            )
-                        })} */}
-                    </> 
-                : <View style={styles.loadPosition}>
-                                    <ActivityIndicator color={'#000'} size={"large"}/>
-                                </View>
-            }
+            <StatusBar barStyle="dark-content" backgroundColor="white" />                                    
+                <>    
+                    {data !== null && 
+                        <FlatList 
+                            data = {data[0].cart_lists}
+                            renderItem = {renderItem}
+                            keyExtractor = {item =>item.unique_id}
+                        />    
+                    }                                
+                </>             
         </SafeAreaView>
     )
 }
@@ -218,10 +168,5 @@ const styles = StyleSheet.create({
         position:'absolute',
         bottom:0,        
         right:0,        
-    },
-    loadPosition:{
-        position:'absolute',        
-        top:100,
-        zIndex:3              
-    }   
+    },      
 })
