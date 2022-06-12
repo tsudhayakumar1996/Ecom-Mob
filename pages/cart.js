@@ -1,45 +1,48 @@
-import React, { useContext,useEffect,useState } from "react";
+import React, { useContext,useState } from "react";
 import { useFocusEffect } from '@react-navigation/native';
-import {View,StyleSheet,StatusBar,Text, Image, TouchableOpacity,ActivityIndicator,FlatList} from "react-native"
+import {View,StyleSheet,StatusBar,Text, Image, TouchableOpacity,Modal,FlatList} from "react-native"
 import SafeAreaView from 'react-native-safe-area-view';
 import { APILists } from "../apilists";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { fetchDelete, fetchGet } from "../fetching/fetchingPost";
 import { TopContext } from "../App";
+import ProductModal from "../commonComponents/modal";
 
-export default function Cart ({navigate,route}) { 
-    console.log("component run")    
-    const [data, setData] = useState(null)
-    const contextVal = useContext(TopContext)  
-    const user_id = contextVal.loggedIn.user_id 
-    let isMutate 
-    isMutate = route.params ? route.params.mutate : false
-    console.log(isMutate,"-----------is mutate")
+export default function Cart () {          
+    const [data, setData] = useState([])
+    const contextVal = useContext(TopContext) 
+    const [modalShow, setmodalShow] = useState(false) 
+    const [IndivProduct, setIndivProduct] = useState(null)    
+    const user_id = contextVal.loggedIn.user_id     
     
-    useFocusEffect(React.useCallback(() => {    
-        console.log("useeffect run")
+    useFocusEffect(React.useCallback(() => {            
       fetchData()                  
     }, [])
     )
 
-    const fetchData = async () => {
-        const cart_lists_init = await fetchGet(APILists.baseURL+"/cart_list/"+user_id,contextVal.loggedIn.token)        
-        if(cart_lists_init){            
-            setData(cart_lists_init)
-        }        
-    }        
+    const fetchData = async () => {        
+        const cart_lists_init = await fetchGet(APILists.baseURL+"/cart_list/"+user_id,contextVal.loggedIn.token)                                    
+        setData(cart_lists_init[0].cart_lists)   
+        contextVal.setcartBadgeCount(cart_lists_init[0].cart_lists.length)                                         
+    }            
     
     const crudHandler = async (key,value) => {
-        if(key === "delete") {
-            let postObj = {}
-            postObj.user_id = contextVal.loggedIn.user_id
-            postObj.unique_id = value            
-            const response = await fetchDelete(APILists.baseURL+"/cart_list",contextVal.loggedIn.token,postObj) 
-            console.log(response)           
+        if(key === "delete") {                                                    
+            const response = await fetchDelete(APILists.baseURL+"/cart_list/"+contextVal.loggedIn.user_id+"/"+value,contextVal.loggedIn.token)                         
+            setData(response[0])   
+            contextVal.setcartBadgeCount(response[0].length)                                      
         }
-        else if(key === "edit") {
-            alert(3)          
+        else if(key === "edit") {            
+            setIndivProduct(value)
+            setmodalShow(true)                  
         }
+        else if(key === "pay") {
+            alert("This option is not available now :(")
+        }
+    }
+
+    const productModalClsoe = () => {
+        setmodalShow(false);
     }
 
     const renderItem = ({item}) => {
@@ -69,7 +72,7 @@ export default function Cart ({navigate,route}) {
                     <Text style={styles.priceText}>Amount</Text>              
                     <Text style={styles.priceText}>{(item.total_qty)*splitted_price}{" Rs"}</Text>
                 </View>
-                <TouchableOpacity style={styles.editBtn} onPress={() => crudHandler("edit")}>
+                <TouchableOpacity style={styles.editBtn} onPress={() => crudHandler("edit",item)}>
                     <MaterialCommunityIcons name="square-edit-outline" color={"#000"} size={24} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.deleteBtn} onPress={() => crudHandler("delete",item.unique_id)}>
@@ -84,16 +87,24 @@ export default function Cart ({navigate,route}) {
 
     return(
         <SafeAreaView style={styles.container}> 
-            <StatusBar barStyle="dark-content" backgroundColor="white" />                                    
-                <>    
-                    {data !== null && 
+            <StatusBar barStyle="dark-content" backgroundColor="white" />                        
+                {data.length > 0 ?                                                                         
+                    <>                                                                           
                         <FlatList 
-                            data = {data[0].cart_lists}
+                            data = {data}
                             renderItem = {renderItem}
                             keyExtractor = {item =>item.unique_id}
-                        />    
-                    }                                
-                </>             
+                        />                                             
+                    </> : <View style={styles.emptyTextBox}><Text style={styles.emptyText}>You Don't Have Any Cart Lists</Text></View>
+                }                
+                <Modal animationType="fade"
+                transparent={false}
+                visible={modalShow}
+                onRequestClose={() => {                            
+                    setmodalShow(false);
+                }}>                                                            
+                        <ProductModal productDetails={IndivProduct} onPress={()=>productModalClsoe()} />                      
+                </Modal>
         </SafeAreaView>
     )
 }
@@ -168,5 +179,19 @@ const styles = StyleSheet.create({
         position:'absolute',
         bottom:0,        
         right:0,        
-    },      
+    },
+    loadPosition:{
+        flex:1,
+        alignItems:'center',
+        justifyContent:'center'               
+    },
+    emptyTextBox:{
+        flex:1,    
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    emptyText:{
+        color:"#000",
+        fontFamily:'Comfortaa-Bold',                        
+    }      
 })

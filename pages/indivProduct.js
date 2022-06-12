@@ -11,13 +11,13 @@ import { TopContext } from "../App";
 
 export default function IndivProduct ({navigation,route}) {  
     const userVal = useContext(TopContext)  
-    const data = route.params    
+    const data = route.params     
     const numberPricesplit = data.price.split(" ")    
     const [indivPrice, setindivPrice] = useState(numberPricesplit[0])
     const [totalProductcount, settotalProductcount] = useState([0])
     const [modalShow, setmodalShow] = useState(false) 
-    const [productArr, setproductArr] = useState([]) 
-    const [sizeArr, setsizeArr] = useState([])
+    const [productArr, setproductArr] = useState([])      
+    const [sizeArr, setsizeArr] = useState([])    
     const [loader, setloader] = useState(false)
     
     const modalHandler = () => {
@@ -86,6 +86,7 @@ export default function IndivProduct ({navigation,route}) {
         setloader(true)              
         let postObj = {}
             postObj.user_id = userVal.loggedIn.user_id
+            postObj.product_id = data._id
             postObj.cart_lists = {
                 product_name : data.title,
                 product_image : data.product_image,

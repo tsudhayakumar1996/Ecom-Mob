@@ -1,4 +1,5 @@
-import React from "react";
+import React,{useContext} from "react";
+import { TopContext } from "../App";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import UserStack from "../Stacks/user";
@@ -8,6 +9,7 @@ import CartStack from "../Stacks/cartStack";
 
 export default function MainTab () {
 
+    const contextVal = useContext(TopContext)    
     const Tab = createBottomTabNavigator();    
 
     return(
@@ -58,7 +60,7 @@ export default function MainTab () {
                     tabBarInactiveBackgroundColor:'#fff',                                      
                     tabBarShowLabel:false,
                     showLabel:false,
-                    tabBarBadge:3,
+                    tabBarBadge:contextVal.cartBadgeCount === 0 ? undefined : contextVal.cartBadgeCount,
                     tabBarBadgeStyle:{
                         backgroundColor:'#000',
                         fontSize:12

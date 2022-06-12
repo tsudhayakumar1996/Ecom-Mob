@@ -15,11 +15,12 @@ export default function App () {
     user:'',
     phone_no:'',
     token:''
-  })  
+  })
+  const [cartBadgeCount, setcartBadgeCount] = useState(0)  
 
   const localStorageGet = async () => {
     try {
-      const loggedIn = await AsyncStorage.getItem('loggedIn');      
+      const loggedIn = await AsyncStorage.getItem('loggedIn');                    
       const parsed = JSON.parse(loggedIn)         
       setloggedIn({
         loggedIn:parsed.loggedIn,
@@ -40,7 +41,7 @@ export default function App () {
   const Drawer = createDrawerNavigator();        
 
   return(        
-      <TopContext.Provider value={{loggedIn,setloggedIn}}>      
+      <TopContext.Provider value={{loggedIn,setloggedIn,cartBadgeCount,setcartBadgeCount}}>      
           <SafeAreaProvider>      
             <NavigationContainer>   
               {loggedIn.loggedIn ?             

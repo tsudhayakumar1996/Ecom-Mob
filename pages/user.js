@@ -15,7 +15,8 @@ export default function User () {
             user:'',
             phone_no:'',
             token:''
-        })               
+        })
+        contextVal.setcartBadgeCount(0)               
         const userObj = {
             loggedIn:false,
             user:'',
@@ -23,7 +24,8 @@ export default function User () {
             token:''
         } 
         try {
-            await AsyncStorage.setItem('loggedIn', JSON.stringify(userObj));            
+            await AsyncStorage.setItem('loggedIn', JSON.stringify(userObj));  
+            await AsyncStorage.setItem('cartBadgeCount', JSON.stringify(0));          
         }catch(error) {
             console.log('error', error);
         }        

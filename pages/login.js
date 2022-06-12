@@ -77,7 +77,8 @@ export default function Login ({route}) {
         const response = await fetchPost(APILists.baseURL+"/"+screenType,!iniInputshow ? userDetails : {password:userDetailsReg.password,phone_no:userDetailsReg.phone_no})               
         if(response[0].status === "success"){ 
             setloader(false)
-            setiniInputshow(false)            
+            setiniInputshow(false) 
+            contextVal.setcartBadgeCount(response[0].badge_count)           
             setsuccessMsg({
                 show:true,
                 msg:"Welcome "+response[0].name+" Logged in successfully"
