@@ -8,10 +8,11 @@ import ButtonCommon from "../commonComponents/button";
 import { TextInput } from "react-native-gesture-handler";
 import { fetchPost } from "../fetching/fetchingPost";
 import { TopContext } from "../App";
+import CommonModal from "../commonComponents/commonModal";
 
 export default function IndivProduct ({navigation,route}) {  
     const userVal = useContext(TopContext)  
-    const data = route.params     
+    const data = route.params           
     const numberPricesplit = data.price.split(" ")    
     const [indivPrice, setindivPrice] = useState(numberPricesplit[0])
     const [totalProductcount, settotalProductcount] = useState([0])
@@ -19,6 +20,9 @@ export default function IndivProduct ({navigation,route}) {
     const [productArr, setproductArr] = useState([])      
     const [sizeArr, setsizeArr] = useState([])    
     const [loader, setloader] = useState(false)
+
+    //***************//
+    const [commonModal, setCommonmodal] = useState(false)
     
     const modalHandler = () => {
         setmodalShow(true)
@@ -92,7 +96,8 @@ export default function IndivProduct ({navigation,route}) {
                 product_image : data.product_image,
                 size : productArr,
                 total_qty : totalProductcount,
-                indiv_price : data.price
+                indiv_price : data.price,
+                act_size : data.sizes
             }             
         const response = await fetchPost(APILists.baseURL+"/cart_list",postObj,userVal.loggedIn.token)
             if(response[0].status === "success"){
@@ -103,7 +108,13 @@ export default function IndivProduct ({navigation,route}) {
                 params: {mutate : true}                
             }) 
         }
-    }            
+    }  
+    
+    //**********************************//
+
+    const modalCloaseHandler = () => {
+        setCommonmodal(false)
+    }
 
     return(
         <SafeAreaView style={styles.container}>            
@@ -135,12 +146,20 @@ export default function IndivProduct ({navigation,route}) {
                     <Text style={{marginTop:10,marginHorizontal:20}}>Add your review...</Text>  
                     <View style={styles.inputBox}>
                         <TextInput style={styles.input} multiline={true} numberOfLines={2}/>  
-                        <TouchableOpacity style={styles.closeBtn}>
+                        <TouchableOpacity style={styles.closeBtn} onPress={()=>setCommonmodal(true)}>
                             <MaterialCommunityIcons name="arrow-right" color={"#fff"} size={24} />
                         </TouchableOpacity> 
                     </View>  
-                    <Text style={{margin:20}}>Others Review...</Text>                                                        
-
+                    <Text style={{margin:20}}>Others Review...</Text>  
+                    <Modal animationType="fade"
+                        transparent={false}
+                        visible={commonModal}
+                        onRequestClose={() => {                            
+                            setCommonmodal(false);
+                        }}
+                        > 
+                            <CommonModal closeHandler={()=>modalCloaseHandler()} actualSizes={data.sizes} selectedSizes={[]} productImage={data.product_image}/>
+                    </Modal>
                     <Modal animationType="fade"
                         transparent={false}
                         visible={modalShow}
@@ -196,16 +215,16 @@ export default function IndivProduct ({navigation,route}) {
                             {productArr.length > 0 &&                            
                                 <Text style={styles.totalText}>Total : {totalProductcount*indivPrice}</Text>
                             }
-                        <TouchableOpacity style={styles.closeBtn} onPress={() => setmodalShow(false)}>
-                            <MaterialCommunityIcons name="close" color={"#fff"} size={24} />
-                        </TouchableOpacity>
-                        {productArr.length > 0 &&
-                            <View style={{position:'absolute',bottom:20,width:"100%"}}>                                
-                                <View style={{alignItems:'center',justifyContent:'center'}}>                                    
-                                    <ButtonCommon text={"Add Cart"} onPress={()=>addCartHandler()}/>
+                            <TouchableOpacity style={styles.closeBtn} onPress={() => setmodalShow(false)}>
+                                <MaterialCommunityIcons name="close" color={"#fff"} size={24} />
+                            </TouchableOpacity>
+                            {productArr.length > 0 &&
+                                <View style={{position:'absolute',bottom:20,width:"100%"}}>                                
+                                    <View style={{alignItems:'center',justifyContent:'center'}}>                                    
+                                        <ButtonCommon text={"Add Cart"} onPress={()=>addCartHandler()}/>
+                                    </View>
                                 </View>
-                            </View>
-                        }
+                            }
                     </Modal>
                 </ScrollView>
             }

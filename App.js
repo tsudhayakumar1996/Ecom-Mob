@@ -20,7 +20,10 @@ export default function App () {
 
   const localStorageGet = async () => {
     try {
-      const loggedIn = await AsyncStorage.getItem('loggedIn');                    
+      const loggedIn = await AsyncStorage.getItem('loggedIn');
+      const badgeCount = await AsyncStorage.getItem('cartBadgeCount');  
+      const parsedbadgeCount = JSON.parse(badgeCount)   
+      setcartBadgeCount(parsedbadgeCount)                                                      
       const parsed = JSON.parse(loggedIn)         
       setloggedIn({
         loggedIn:parsed.loggedIn,

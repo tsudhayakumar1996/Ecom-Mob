@@ -6,13 +6,17 @@ import { APILists } from "../apilists";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { fetchDelete, fetchGet } from "../fetching/fetchingPost";
 import { TopContext } from "../App";
-import ProductModal from "../commonComponents/modal";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CommonModal from "../commonComponents/commonModal";
 
 export default function Cart () {          
-    const [data, setData] = useState([])
+    const [data, setData] = useState([])    
+    const [propsToSent, setpropsToSent] = useState({
+        "selectedSizes":[],
+        "IndivProduct":null,        
+    })
     const contextVal = useContext(TopContext) 
-    const [modalShow, setmodalShow] = useState(false) 
-    const [IndivProduct, setIndivProduct] = useState(null)    
+    const [modalShow, setmodalShow] = useState(false)           
     const user_id = contextVal.loggedIn.user_id     
     
     useFocusEffect(React.useCallback(() => {            
@@ -22,19 +26,29 @@ export default function Cart () {
 
     const fetchData = async () => {        
         const cart_lists_init = await fetchGet(APILists.baseURL+"/cart_list/"+user_id,contextVal.loggedIn.token)                                    
-        setData(cart_lists_init[0].cart_lists)   
-        contextVal.setcartBadgeCount(cart_lists_init[0].cart_lists.length)                                         
+        setData(cart_lists_init[0].cart_lists)                          
+        contextVal.setcartBadgeCount(cart_lists_init[0].cart_lists.length) 
+        await AsyncStorage.setItem('cartBadgeCount', JSON.stringify(cart_lists_init[0].cart_lists.length));                                        
     }            
     
     const crudHandler = async (key,value) => {
         if(key === "delete") {                                                    
-            const response = await fetchDelete(APILists.baseURL+"/cart_list/"+contextVal.loggedIn.user_id+"/"+value,contextVal.loggedIn.token)                         
+            const response = await fetchDelete(APILists.baseURL+"/cart_list/"+contextVal.loggedIn.user_id+"/"+value,contextVal.loggedIn.token)                                   
             setData(response[0])   
-            contextVal.setcartBadgeCount(response[0].length)                                      
+            contextVal.setcartBadgeCount(response[0].length) 
+            await AsyncStorage.setItem('cartBadgeCount', JSON.stringify(response[0].length));                                       
         }
-        else if(key === "edit") {            
-            setIndivProduct(value)
-            setmodalShow(true)                  
+        else if(key === "edit") { 
+            let selectedSizeArr = []
+            value.size.map((each)=>{
+                selectedSizeArr.push(each.size)
+            })                                    
+            setmodalShow(true)
+            setpropsToSent({
+                ...propsToSent,
+                ["selectedSizes"]:selectedSizeArr,
+                ["IndivProduct"]:value,                
+            })                  
         }
         else if(key === "pay") {
             alert("This option is not available now :(")
@@ -102,8 +116,10 @@ export default function Cart () {
                 visible={modalShow}
                 onRequestClose={() => {                            
                     setmodalShow(false);
-                }}>                                                            
-                        <ProductModal productDetails={IndivProduct} onPress={()=>productModalClsoe()} />                      
+                }}>                         
+                    {propsToSent.IndivProduct &&                                                                                       
+                        <CommonModal closeHandler={()=>productModalClsoe()} actualSizes={propsToSent.IndivProduct.act_size} selectedSizes={propsToSent.selectedSizes} productImage={propsToSent.IndivProduct.product_image} selectedProduct={propsToSent.IndivProduct.size} indivPrice={propsToSent.IndivProduct.indiv_price} totalQty={propsToSent.IndivProduct.total_qty}/>
+                    }
                 </Modal>
         </SafeAreaView>
     )

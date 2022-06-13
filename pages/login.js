@@ -5,7 +5,7 @@ import { fetchPost } from "../fetching/fetchingPost";
 import { APILists } from "../apilists";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ButtonCommon from "../commonComponents/button";
-
+import {Keyboard} from 'react-native'
 
 export default function Login ({route}) {
     
@@ -73,12 +73,14 @@ export default function Login ({route}) {
     }
 
     const loginHandler = async () => { 
+        Keyboard.dismiss()
         setloader(true)              
         const response = await fetchPost(APILists.baseURL+"/"+screenType,!iniInputshow ? userDetails : {password:userDetailsReg.password,phone_no:userDetailsReg.phone_no})               
         if(response[0].status === "success"){ 
             setloader(false)
             setiniInputshow(false) 
-            contextVal.setcartBadgeCount(response[0].badge_count)           
+            contextVal.setcartBadgeCount(response[0].badge_count) 
+            await AsyncStorage.setItem('cartBadgeCount', JSON.stringify(response[0].badge_count));          
             setsuccessMsg({
                 show:true,
                 msg:"Welcome "+response[0].name+" Logged in successfully"
@@ -94,6 +96,7 @@ export default function Login ({route}) {
     }
 
     const RegisterHandler = async () => { 
+        Keyboard.dismiss()
         setloader(true)        
         if(rePass === userDetailsReg.password){                 
             const response = await fetchPost(APILists.baseURL+"/"+screenType,userDetailsReg)                     
