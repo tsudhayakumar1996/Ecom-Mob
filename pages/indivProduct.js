@@ -158,7 +158,7 @@ export default function IndivProduct ({navigation,route}) {
                             setCommonmodal(false);
                         }}
                         > 
-                            <CommonModal closeHandler={()=>modalCloaseHandler()} actualSizes={data.sizes} selectedSizes={[]} productImage={data.product_image}/>
+                            <CommonModal closeHandler={()=>modalCloaseHandler()} actualSizes={data.sizes} selectedSizes={[]} productImage={data.product_image} selectedProduct={[]} indivPrice={data.price} totalQtys={0} mode={"addToCart"}/>
                     </Modal>
                     <Modal animationType="fade"
                         transparent={false}

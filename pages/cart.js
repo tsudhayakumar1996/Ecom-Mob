@@ -55,7 +55,7 @@ export default function Cart () {
         }
     }
 
-    const productModalClsoe = () => {
+    const productModalClsoe = () => {        
         setmodalShow(false);
     }
 
@@ -118,7 +118,7 @@ export default function Cart () {
                     setmodalShow(false);
                 }}>                         
                     {propsToSent.IndivProduct &&                                                                                       
-                        <CommonModal closeHandler={()=>productModalClsoe()} actualSizes={propsToSent.IndivProduct.act_size} selectedSizes={propsToSent.selectedSizes} productImage={propsToSent.IndivProduct.product_image} selectedProduct={propsToSent.IndivProduct.size} indivPrice={propsToSent.IndivProduct.indiv_price} totalQty={propsToSent.IndivProduct.total_qty}/>
+                        <CommonModal closeHandler={()=>productModalClsoe()} actualSizes={propsToSent.IndivProduct.act_size} selectedSizes={propsToSent.selectedSizes} productImage={propsToSent.IndivProduct.product_image} selectedProduct={propsToSent.IndivProduct.size} indivPrice={propsToSent.IndivProduct.indiv_price} totalQtys={propsToSent.IndivProduct.total_qty} mode={"editOnCart"}/>
                     }
                 </Modal>
         </SafeAreaView>
