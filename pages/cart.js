@@ -1,6 +1,6 @@
 import React, { useContext,useState } from "react";
 import { useFocusEffect } from '@react-navigation/native';
-import {View,StyleSheet,StatusBar,Text, Image, TouchableOpacity,Modal,FlatList} from "react-native"
+import {View,StyleSheet,StatusBar,Text, Image, TouchableOpacity,Modal,FlatList, ActivityIndicator} from "react-native"
 import SafeAreaView from 'react-native-safe-area-view';
 import { APILists } from "../apilists";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -8,8 +8,9 @@ import { fetchDelete, fetchGet } from "../fetching/fetchingPost";
 import { TopContext } from "../App";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommonModal from "../commonComponents/commonModal";
+import { useDrawerStatus } from "@react-navigation/drawer";
 
-export default function Cart () {          
+export default function Cart ({navigation}) {          
     const [data, setData] = useState([])    
     const [propsToSent, setpropsToSent] = useState({
         "selectedSizes":[],
@@ -17,23 +18,27 @@ export default function Cart () {
     })
     const contextVal = useContext(TopContext) 
     const [modalShow, setmodalShow] = useState(false)           
-    const user_id = contextVal.loggedIn.user_id     
+    const user_id = contextVal.loggedIn.user_id  
+    const [apiTrigger, setapiTrigger] = useState(false) 
+    const [loader, setloader] = useState(false)      
     
     useFocusEffect(React.useCallback(() => {            
       fetchData()                  
-    }, [])
+    }, [apiTrigger])
     )
 
-    const fetchData = async () => {        
-        const cart_lists_init = await fetchGet(APILists.baseURL+"/cart_list/"+user_id,contextVal.loggedIn.token)                                    
-        setData(cart_lists_init[0].cart_lists)                          
+    const fetchData = async () => {  
+        setloader(true)      
+        const cart_lists_init = await fetchGet(APILists.baseURL+"/cart_list/"+user_id,contextVal.loggedIn.token)                                       
+        setData(cart_lists_init[0].cart_lists)                                
         contextVal.setcartBadgeCount(cart_lists_init[0].cart_lists.length) 
-        await AsyncStorage.setItem('cartBadgeCount', JSON.stringify(cart_lists_init[0].cart_lists.length));                                        
+        await AsyncStorage.setItem('cartBadgeCount', JSON.stringify(cart_lists_init[0].cart_lists.length));
+        setloader(false)                                        
     }            
     
     const crudHandler = async (key,value) => {
         if(key === "delete") {                                                    
-            const response = await fetchDelete(APILists.baseURL+"/cart_list/"+contextVal.loggedIn.user_id+"/"+value,contextVal.loggedIn.token)                                   
+            const response = await fetchDelete(APILists.baseURL+"/cart_list/"+contextVal.loggedIn.user_id+"/"+value,contextVal.loggedIn.token)                                                           
             setData(response[0])   
             contextVal.setcartBadgeCount(response[0].length) 
             await AsyncStorage.setItem('cartBadgeCount', JSON.stringify(response[0].length));                                       
@@ -57,6 +62,7 @@ export default function Cart () {
 
     const productModalClsoe = () => {        
         setmodalShow(false);
+        setapiTrigger(!apiTrigger)
     }
 
     const renderItem = ({item}) => {
@@ -100,7 +106,7 @@ export default function Cart () {
     }
 
     return(
-        <SafeAreaView style={styles.container}> 
+        <SafeAreaView style={styles.container}>         
             <StatusBar barStyle="dark-content" backgroundColor="white" />                        
                 {data.length > 0 ?                                                                         
                     <>                                                                           
@@ -109,7 +115,13 @@ export default function Cart () {
                             renderItem = {renderItem}
                             keyExtractor = {item =>item.unique_id}
                         />                                             
-                    </> : <View style={styles.emptyTextBox}><Text style={styles.emptyText}>You Don't Have Any Cart Lists</Text></View>
+                    </> : <View style={styles.emptyTextBox}>
+                            {loader ?
+                                <View style={styles.loadPosition}>
+                                    <ActivityIndicator color={'#000'} size={"large"}/>
+                                </View> : <Text style={styles.emptyText}>You Don't Have Any Cart Lists</Text>
+                            }
+                          </View>                          
                 }                
                 <Modal animationType="fade"
                 transparent={false}
@@ -118,9 +130,9 @@ export default function Cart () {
                     setmodalShow(false);
                 }}>                         
                     {propsToSent.IndivProduct &&                                                                                       
-                        <CommonModal closeHandler={()=>productModalClsoe()} actualSizes={propsToSent.IndivProduct.act_size} selectedSizes={propsToSent.selectedSizes} productImage={propsToSent.IndivProduct.product_image} selectedProduct={propsToSent.IndivProduct.size} indivPrice={propsToSent.IndivProduct.indiv_price} totalQtys={propsToSent.IndivProduct.total_qty} mode={"editOnCart"}/>
+                        <CommonModal closeHandler={()=>productModalClsoe()} actualSizes={propsToSent.IndivProduct.act_size} selectedSizes={propsToSent.selectedSizes} productImage={propsToSent.IndivProduct.product_image} selectedProduct={propsToSent.IndivProduct.size} indivPrice={propsToSent.IndivProduct.indiv_price} totalQtys={propsToSent.IndivProduct.total_qty} productId={propsToSent.IndivProduct.product_id} productName={propsToSent.IndivProduct.product_name} mode={"editOnCart"} navigation={navigation} uniqueId={propsToSent.IndivProduct.unique_id} />
                     }
-                </Modal>
+                </Modal>                
         </SafeAreaView>
     )
 }

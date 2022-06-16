@@ -15,6 +15,23 @@ export const fetchPost = async (url,postObj,token) => {
     return data          
 } 
 
+export const fetchUpdate = async (url,postObj,token) => {
+    const data = []
+    await fetch(url,{
+        method:"PATCH",
+        headers:{
+            "Content-Type":"application/json",
+            "auth-token":token
+        },
+        body:JSON.stringify(
+            postObj
+        )
+    })        
+    .then(response =>response.json()) 
+    .then(response => data.push(response))      
+    return data          
+} 
+
 export const fetchDelete = async (url,token) => {      
     const data = []
     await fetch(url,{

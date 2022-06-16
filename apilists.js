@@ -1,3 +1,3 @@
 export const APILists = {
-    baseURL : "https://econ-api-testing.herokuapp.com",
+    baseURL : "https://ecom-api-testing.herokuapp.com",
 }

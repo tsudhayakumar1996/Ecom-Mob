@@ -1,13 +1,15 @@
-import React,{useState} from "react"
+import React,{useState,useContext} from "react"
 import {View,StyleSheet,Text, Image, TouchableOpacity,ActivityIndicator} from "react-native"
 import ButtonCommon from "./button";
+import { fetchPost, fetchUpdate } from "../fetching/fetchingPost";
 import { APILists } from "../apilists";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { TopContext } from "../App";
 
-export default function CommonModal ({closeHandler,actualSizes,selectedSizes,productImage,selectedProduct,indivPrice,totalQtys,mode}) {
+export default function CommonModal ({closeHandler,actualSizes,selectedSizes,productImage,selectedProduct,indivPrice,totalQtys,productId,productName,mode,navigation,uniqueId}) {
 
+    const contextVal = useContext(TopContext)
     const indiv_price = indivPrice.split(' ')
-    console.log(actualSizes,selectedSizes,productImage,selectedProduct,indivPrice,totalQtys,mode,"++++++++++++++++++++++++++")
     const [selectedSizesFromState, setselectedSizes] = useState(selectedSizes) 
     const [selectedProductFromState, setselectedProduct] = useState(selectedProduct)  
     const [totalProductCount, settotalProductCount] = useState(totalQtys) 
@@ -30,9 +32,7 @@ export default function CommonModal ({closeHandler,actualSizes,selectedSizes,pro
             const notArraysize = selectedSizesFromState.filter(each=>each !== e)
             const notArrvalue = selectedProductFromState.filter(each=>each.size !== e)            
             setselectedSizes(notArraysize)            
-            setselectedProduct(notArrvalue) 
-            // const checkForqtyRed = productArr.filter(each=>each.size === e)            
-            // settotalProductcount(totalProductcount-checkForqtyRed[0].qty)                                 
+            setselectedProduct(notArrvalue)                                            
         }             
     }
 
@@ -78,35 +78,50 @@ export default function CommonModal ({closeHandler,actualSizes,selectedSizes,pro
     }
 
     const addCartHandler = async () => { 
-        setloader(true)              
-        let postObj = {}
-            postObj.user_id = userVal.loggedIn.user_id
-            postObj.product_id = data._id
-            postObj.cart_lists = {
-                product_name : data.title,
-                product_image : data.product_image,
-                size : productArr,
-                total_qty : totalProductcount,
-                indiv_price : data.price,
-                act_size : data.sizes
-            }             
-        const response = await fetchPost(APILists.baseURL+"/cart_list",postObj,userVal.loggedIn.token)
+        setloader(true)   
+        if(mode === "addToCart"){           
+            let postObj = {}
+                postObj.user_id = contextVal.loggedIn.user_id
+                postObj.product_id = productId
+                postObj.cart_lists = {
+                    product_name : productName,
+                    product_image : productImage,
+                    size : selectedProductFromState,
+                    total_qty : totalProductCount,
+                    indiv_price : indivPrice,
+                    act_size : actualSizes
+                }             
+            const response = await fetchPost(APILists.baseURL+"/cart_list",postObj,contextVal.loggedIn.token)
+                if(response[0].status === "success"){
+                    setloader(false)                   
+                    closeHandler() 
+                    navigation.navigate("CartTab",{
+                    screen:'CartStack'                               
+                }) 
+            }
+        }else{
+            let postObj = {}
+            postObj.unique_id = uniqueId
+            postObj.product_id = productId
+            postObj.product_name = productName
+            postObj.product_image = productImage
+            postObj.size = selectedProductFromState
+            postObj.total_qty = totalProductCount
+            postObj.indiv_price = indivPrice
+            postObj.act_size = actualSizes  
+            const response = await fetchUpdate (APILists.baseURL+"/cart_list/"+contextVal.loggedIn.user_id+"/"+uniqueId,postObj,contextVal.loggedIn.token)
             if(response[0].status === "success"){
-                setloader(false)
-                setmodalShow(false)    
-                navigation.navigate("CartTab",{
-                screen:'CartStack',
-                params: {mutate : true}                
-            }) 
-        }
+                setloader(false)                   
+                closeHandler()                 
+            }
+        }                  
     }
 
     return(
         <>            
             <TouchableOpacity style={styles.closeBtn} onPress={() => modalCloseHandler()}>
                 <MaterialCommunityIcons name="close" color={"#fff"} size={24} />
-            </TouchableOpacity>
-            {console.log(selectedSizesFromState,"--------------",selectedProductFromState)}
+            </TouchableOpacity>            
             <View style={{alignItems:'center'}}>  
                 {loader &&
                     <View style={styles.loadPosition}>
