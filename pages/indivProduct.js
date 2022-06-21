@@ -28,10 +28,12 @@ export default function IndivProduct ({navigation,route}) {
             {data &&
                 <ScrollView>
                     <Text style={styles.priceText}>{data.price}</Text>
-                    <Image 
-                        source={{uri:APILists.baseURL+"/"+data.product_image}}
-                        style={{ width: 350, height:350 }}
-                    />
+                    <View style={{alignItems:'center'}}>
+                        <Image 
+                            source={{uri:APILists.baseURL+"/"+data.product_image}}
+                            style={{ width: 350, height:350 }}
+                        />
+                    </View>
                     <Text style={styles.textBlack}>{data.title}</Text>
                     <Text style={styles.textDesc}>{data.description}</Text>
                     <View style={styles.sizeBox}>

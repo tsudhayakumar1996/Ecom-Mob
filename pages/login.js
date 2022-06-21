@@ -39,7 +39,8 @@ export default function Login ({route}) {
             user:res[0].name,
             phone_no:res[0].phone_no,
             token:res[0].token,
-            user_id:res[0].user_id            
+            user_id:res[0].user_id,
+            user_image:res[0].user_image            
         }           
         try {
             await AsyncStorage.setItem('loggedIn', JSON.stringify(userObj));            
@@ -57,7 +58,8 @@ export default function Login ({route}) {
                     user:res[0].name,
                     phone_no:res[0].phone_no,
                     token:res[0].token,
-                    user_id:res[0].user_id
+                    user_id:res[0].user_id,
+                    user_image:res[0].user_image
                 })            
             },2000)
         }else{            
@@ -75,7 +77,7 @@ export default function Login ({route}) {
     const loginHandler = async () => { 
         Keyboard.dismiss()
         setloader(true)              
-        const response = await fetchPost(APILists.baseURL+"/"+screenType,!iniInputshow ? userDetails : {password:userDetailsReg.password,phone_no:userDetailsReg.phone_no})               
+        const response = await fetchPost(APILists.baseURL+"/"+screenType,!iniInputshow ? userDetails : {password:userDetailsReg.password,phone_no:userDetailsReg.phone_no})                               
         if(response[0].status === "success"){ 
             setloader(false)
             setiniInputshow(false) 
@@ -139,7 +141,11 @@ export default function Login ({route}) {
                 [key] : e
             })            
         }        
-    }     
+    }   
+    
+    const registerModeChangeHandler = () => {
+        setscreenType('register')
+    }
 
     return(
         <View style={styles.container}>  
@@ -152,7 +158,12 @@ export default function Login ({route}) {
                     }
                     {screenType === "login" ?
                         <View> 
-                            {alertShow.show &&<Text style={styles.textBlack}>{alertShow.msg}</Text>}                                           
+                            {alertShow.show &&
+                                <View>
+                                    <Text style={styles.textBlack}>{alertShow.msg}</Text>
+                                    <Text onPress={()=>registerModeChangeHandler()} style={styles.textRegister}>Or Register Here{" >>>"}</Text>
+                                </View>
+                            }                                           
                             {iniInputshow ?
                                 <View>
                                     <TextInput style={styles.input} value={userDetailsReg.phone_no} onChangeText={(e)=>onChangeHandler(e,"phone_no")} keyboardType="numeric"/>
@@ -228,6 +239,13 @@ const styles = StyleSheet.create({
     textBlack:{
         color:'#000',
         padding:10,
+        textAlign:'center',
+        fontFamily:"Comfortaa-Bold",
+    },
+    textRegister:{
+        color:'#000',
+        padding:5,   
+        fontWeight:'700',     
         textAlign:'center',
         fontFamily:"Comfortaa-Bold",
     },

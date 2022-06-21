@@ -8,7 +8,6 @@ import { fetchDelete, fetchGet } from "../fetching/fetchingPost";
 import { TopContext } from "../App";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommonModal from "../commonComponents/commonModal";
-import { useDrawerStatus } from "@react-navigation/drawer";
 
 export default function Cart ({navigation}) {          
     const [data, setData] = useState([])    

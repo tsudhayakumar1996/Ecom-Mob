@@ -7,6 +7,7 @@ import { TopContext } from "../App";
 export default function NavBar ({props}) {
 
     const contextVal = useContext(TopContext)
+    console.log(contextVal.products)
     const drawerHandler = () => {
         props.toggleDrawer();
     }
@@ -27,7 +28,7 @@ export default function NavBar ({props}) {
             <TouchableOpacity style={styles.loggedImgBox} onPress={()=>userTriggerHandler()}>
                 <Image
                     style={{width: 30, height: 30 }}
-                    source={require('../src/images/icon-4.png')}
+                    source={require('../src/images/user.png')}
                 />
                 <Text style={styles.textBlack}>{contextVal.loggedIn.user}</Text>    
             </TouchableOpacity> 

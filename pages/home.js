@@ -1,4 +1,4 @@
-import React,{useContext} from "react";
+import React,{useContext,useEffect} from "react";
 import {FlatList, StyleSheet,StatusBar,Text,TouchableOpacity,Image} from "react-native"
 import SafeAreaView from 'react-native-safe-area-view';
 import NavBar from "../components/navBar";
@@ -9,7 +9,10 @@ import { ProductSwr } from "../swr/productSWR";
 export default function Home ({navigation}) {  
     
     const contextVal = useContext(TopContext)        
-    const {data,isLoading,isError} = ProductSwr(APILists.baseURL+"/product",contextVal.loggedIn.token)       
+    const {data,isLoading,isError} = ProductSwr(APILists.baseURL+"/product",contextVal.loggedIn.token)  
+    useEffect(() => {
+        contextVal.setproducts(data) 
+    }, [data])           
     
     const indivProductHandler = (item) =>{
         navigation.navigate("IndivProductStack",item)

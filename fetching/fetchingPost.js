@@ -15,17 +15,15 @@ export const fetchPost = async (url,postObj,token) => {
     return data          
 } 
 
-export const fetchUpdate = async (url,postObj,token) => {
+export const fetchUpdate = async (url,postObj,token) => {    
     const data = []
     await fetch(url,{
         method:"PATCH",
         headers:{
-            "Content-Type":"application/json",
+            "Content-Type":"Multipart/form-data",
             "auth-token":token
         },
-        body:JSON.stringify(
-            postObj
-        )
+        data:postObj        
     })        
     .then(response =>response.json()) 
     .then(response => data.push(response))      
