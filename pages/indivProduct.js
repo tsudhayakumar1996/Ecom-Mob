@@ -9,7 +9,8 @@ import { TextInput } from "react-native-gesture-handler";
 import CommonModal from "../commonComponents/commonModal";
 
 export default function IndivProduct ({navigation,route}) {       
-    const data = route.params                               
+    
+    const data = route.params                                       
     const [commonModal, setCommonmodal] = useState(false)                    
             
     const modalHandler = () => {
@@ -26,7 +27,7 @@ export default function IndivProduct ({navigation,route}) {
                 <MaterialCommunityIcons name="arrow-left" color={"#fff"} size={24} />
             </TouchableOpacity>
             {data &&
-                <ScrollView>
+                <ScrollView style={{zIndex:-2}}>
                     <Text style={styles.priceText}>{data.price}</Text>
                     <View style={{alignItems:'center'}}>
                         <Image 
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
         fontSize:14,    
         paddingHorizontal:20,
         paddingVertical:10,    
-        fontFamily:"Comfortaa-Bold",
+        fontFamily:"Comfortaa-Bold",        
     },
     priceText:{
         color:'#fff',
@@ -105,9 +106,9 @@ const styles = StyleSheet.create({
         paddingVertical:10,
         backgroundColor:'#000',
         position:'absolute',
-        top:73,        
+        top:70,        
         left:0,
-        zIndex:2                
+        zIndex:-1               
     },
     closeBtn:{
         padding:10,        

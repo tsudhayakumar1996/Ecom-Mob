@@ -1,4 +1,4 @@
-#Thu Jun 16 11:51:04 IST 2022
+#Mon Jun 27 21:12:33 IST 2022
 base.0=/home/udhay/Projects/learning/Ecom/android/app/build/intermediates/dex/release/mergeDexRelease/classes.dex
 renamed.0=classes.dex
 path.0=classes.dex

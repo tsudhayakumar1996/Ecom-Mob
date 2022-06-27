@@ -1,7 +1,7 @@
 import React,{useContext,useState} from "react";
 import {View, Text, StyleSheet, TextInput, ActivityIndicator} from "react-native"
 import { TopContext } from "../App";
-import { fetchPost } from "../fetching/fetchingPost";
+import { fetchPost } from "../fetching/fetchingHelpers";
 import { APILists } from "../apilists";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ButtonCommon from "../commonComponents/button";
@@ -161,7 +161,9 @@ export default function Login ({route}) {
                             {alertShow.show &&
                                 <View>
                                     <Text style={styles.textBlack}>{alertShow.msg}</Text>
-                                    <Text onPress={()=>registerModeChangeHandler()} style={styles.textRegister}>Or Register Here{" >>>"}</Text>
+                                    {screenType === "register" &&
+                                        <Text onPress={()=>registerModeChangeHandler()} style={styles.textRegister}>Or Register Here{" >>>"}</Text>
+                                    }
                                 </View>
                             }                                           
                             {iniInputshow ?
@@ -170,7 +172,7 @@ export default function Login ({route}) {
                                     <TextInput style={styles.input} value={userDetailsReg.password} placeholder="Password" onChangeText={(e)=>onChangeHandler(e,"password")}/>
                                 </View>
                                 :
-                                <View>
+                                <View>                                    
                                     <TextInput style={styles.input} placeholder={"Enter Phone No"} onChangeText={(e)=>onChangeHandler(e,"phone_no")} keyboardType="numeric"/>
                                     <TextInput style={styles.input} placeholder="Password" onChangeText={(e)=>onChangeHandler(e,"password")}/>
                                 </View>
@@ -187,7 +189,7 @@ export default function Login ({route}) {
                             <TextInput style={styles.input} placeholder="Confirm Password" onChangeText={(e)=>onChangeHandler(e,"repassword")}/>                            
                             <View style={styles.button}>
                                 <ButtonCommon text={"Register"} onPress={()=>RegisterHandler()}/>
-                            </View>
+                            </View>                            
                         </View>
                     }
                 </View>

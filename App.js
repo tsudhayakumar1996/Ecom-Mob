@@ -5,6 +5,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import MainTab from "./Tab/mainTab";
 import LoginStack from "./Stacks/loginStack";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DrawerContent from "./Drawer/drawer_content";
 
 export const TopContext = React.createContext()
 
@@ -54,11 +55,11 @@ export default function App () {
   const Drawer = createDrawerNavigator();        
 
   return(        
-      <TopContext.Provider value={{loggedIn,setloggedIn,cartBadgeCount,setcartBadgeCount,setproducts}}>      
+      <TopContext.Provider value={{loggedIn,setloggedIn,cartBadgeCount,setcartBadgeCount,setproducts,products}}>      
           <SafeAreaProvider>      
             <NavigationContainer>   
               {loggedIn.loggedIn ?             
-                <Drawer.Navigator initialRouteName="Home">
+                <Drawer.Navigator initialRouteName="Home" drawerContent={ (props) => <DrawerContent {...props}/>}>
                   <Drawer.Screen 
                     name="Drawer" 
                     component={MainTab}

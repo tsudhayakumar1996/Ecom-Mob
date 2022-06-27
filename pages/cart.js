@@ -4,7 +4,7 @@ import {View,StyleSheet,StatusBar,Text, Image, TouchableOpacity,Modal,FlatList, 
 import SafeAreaView from 'react-native-safe-area-view';
 import { APILists } from "../apilists";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { fetchDelete, fetchGet } from "../fetching/fetchingPost";
+import { fetchDelete, fetchGet } from "../fetching/fetchingHelpers";
 import { TopContext } from "../App";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommonModal from "../commonComponents/commonModal";

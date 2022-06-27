@@ -1,7 +1,7 @@
 import React,{useState,useContext} from "react"
 import {View,StyleSheet,Text, Image, TouchableOpacity,ActivityIndicator} from "react-native"
 import ButtonCommon from "./button";
-import { fetchPost, fetchUpdate } from "../fetching/fetchingPost";
+import { fetchPost, fetchUpdate } from "../fetching/fetchingHelpers";
 import { APILists } from "../apilists";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TopContext } from "../App";

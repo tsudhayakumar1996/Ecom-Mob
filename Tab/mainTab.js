@@ -25,13 +25,13 @@ export default function MainTab () {
                     tabBarShowLabel:false,
                     tabBarActiveBackgroundColor:'#000',
                     tabBarInactiveBackgroundColor:'#fff',
-                    showLabel:false,
+                    showLabel:false,                    
                     tabBarIcon: ({ color }) => (
                         <MaterialCommunityIcons name="home" color={color} size={26} />
                     ),
                 }}
           />
-          <Tab.Screen 
+          {/* <Tab.Screen 
                name="ProductTab" 
                component={ProductStack} 
                options={{
@@ -47,7 +47,7 @@ export default function MainTab () {
                         <MaterialCommunityIcons name="dots-grid" color={color} size={26} />
                     ),
               }}
-          />
+          /> */}
           <Tab.Screen 
                name="CartTab" 
                component={CartStack} 
