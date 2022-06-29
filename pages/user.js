@@ -133,10 +133,16 @@ export default function User () {
                                         <ActivityIndicator color={'#000'} size={"large"}/>
                                     </View>
                                 } 
-                                <Image 
-                                    source={{uri: photo === null ? APILists.baseURL+"/"+contextVal.loggedIn.user_image + '?' + new Date() : photo.assets[0].uri}}
-                                    style={{ width: 200, height:200, borderRadius: 100/2, backgroundColor:'#f0f1f2',alignSelf:'center'}}
-                                />                                                                                        
+                                {contextVal.loggedIn.user_image === "" && photo === null ?
+                                    <Image 
+                                        source={require('../src/images/user.png')}
+                                        style={{ width: 200, height:200, borderRadius: 100/2, backgroundColor:'#f0f1f2',alignSelf:'center'}}
+                                    /> :
+                                    <Image 
+                                        source={{uri: photo === null ? APILists.baseURL+"/"+contextVal.loggedIn.user_image + '?' + new Date() : photo.assets[0].uri}}
+                                        style={{ width: 200, height:200, borderRadius: 100/2, backgroundColor:'#f0f1f2',alignSelf:'center'}}
+                                    /> 
+                                }                                                                                     
                                 <TouchableOpacity style={styles.editBtnAbs} onPress={()=>handleChoosePhoto()}>
                                     <MaterialCommunityIcons name="lead-pencil" color={"#fff"} size={24} />
                                 </TouchableOpacity>    

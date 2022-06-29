@@ -169,12 +169,12 @@ export default function Login ({route}) {
                             {iniInputshow ?
                                 <View>
                                     <TextInput style={styles.input} value={userDetailsReg.phone_no} onChangeText={(e)=>onChangeHandler(e,"phone_no")} keyboardType="numeric"/>
-                                    <TextInput style={styles.input} value={userDetailsReg.password} placeholder="Password" onChangeText={(e)=>onChangeHandler(e,"password")}/>
+                                    <TextInput style={styles.input} value={userDetailsReg.password} placeholder="Password" secureTextEntry={true} onChangeText={(e)=>onChangeHandler(e,"password")}/>
                                 </View>
                                 :
                                 <View>                                    
                                     <TextInput style={styles.input} placeholder={"Enter Phone No"} onChangeText={(e)=>onChangeHandler(e,"phone_no")} keyboardType="numeric"/>
-                                    <TextInput style={styles.input} placeholder="Password" onChangeText={(e)=>onChangeHandler(e,"password")}/>
+                                    <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} onChangeText={(e)=>onChangeHandler(e,"password")}/>
                                 </View>
                             }                                                        
                             <View style={styles.button}>

@@ -33,11 +33,17 @@ export default function DrawerContent (props) {
     return(
         <View style={styles.drawerBox}>            
             <View>    
-                <View style={styles.drawerContentImgBox}>                    
-                    <Image 
-                        source={{uri:APILists.baseURL+"/"+contextVal.loggedIn.user_image + '?' + new Date()}}
-                        style={{ width: 80, height:80, borderRadius: 40/2, backgroundColor:'#f0f1f2'}}
-                    />                    
+                <View style={styles.drawerContentImgBox}>  
+                    {contextVal.loggedIn.user_image === "" ?                  
+                        <Image 
+                            source={require('../src/images/user.png')}
+                            style={{ width: 80, height:80, borderRadius: 40/2, backgroundColor:'#f0f1f2'}}
+                        /> :
+                        <Image 
+                            source={{uri:APILists.baseURL+"/"+contextVal.loggedIn.user_image + '?' + new Date()}}
+                            style={{ width: 80, height:80, borderRadius: 40/2, backgroundColor:'#f0f1f2'}}
+                        />           
+                    }
                     <Text style={styles.userText}>{contextVal.loggedIn.user}</Text>
                 </View>            
                 <TouchableOpacity style={styles.drawerContentBox} onPress={()=>props.navigation.navigate("HomeTab",{ screen : "HomeStack"})}>
